@@ -9,6 +9,10 @@ end
 if nargin<4
   nbins=max(2,min([ceil(length(x)/10), 200]));
 end
+if (mean(x<=0) > 0.01)
+  fprintf('pdfplot Warning: %.1f%% (%d points) of data is non-positive and log plotting was requested.\n', 100*mean(x<=0),sum(x<=0));
+end
+x=x(x>0);
 xs=sort(x);
 first=1;
 px=[]; py=[];
