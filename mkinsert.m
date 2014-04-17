@@ -1,7 +1,10 @@
 % Save a figure for use in powerpoint or prezi
-function mkinsert(filename,fnum,aspect)
+function mkinsert(filename,fnum,aspect,dpi)
   if nargin<2
     fnum=gcf;
+  end
+  if nargin<4
+    dpi=72;
   end
   figure(fnum);
   fontsize=16;
@@ -37,6 +40,6 @@ function mkinsert(filename,fnum,aspect)
       end
     end
   end
-  print(gcf,'-dpng',['-r',num2str(72)],filename);
+  print(gcf,'-dpng',['-r',num2str(dpi)],filename);
   fprintf('Saved figure to %s\n', [filename,'.png']);
 end
