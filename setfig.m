@@ -19,6 +19,10 @@ for i=1:length(figlist.name)
 end
 figlist.name{end+1}=s;
 figure(max(figlist.fignum)+1);
-figlist.fignum=[figlist.fignum,gcf];
+if isnumeric(gcf)
+  figlist.fignum=[figlist.fignum,gcf];
+else
+  figlist.fignum=[figlist.fignum,get(gcf,'Number')];
+end  
 set(figlist.fignum(end),'Name',figlist.name{end});
 return;
