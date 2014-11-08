@@ -1,12 +1,28 @@
 % Add logarithmic ticks to an axis
-function logticks
+function logticks(xlog,ylog)
+if nargin<1
+  xlog=true;
+end
+if nargin<2
+  ylog=xlog;
+end
 c=axis;
 for ax=1:2
+  if ax==1 && ~xlog
+    continue;
+  end
+  if ax==2 && ~ylog
+    continue;
+  end
   ticks=[];
   ticklabels={};
   for i=floor(log10(c(ax*2-1))):ceil(log10(c(ax*2)))
     if i<0
       fmt=sprintf('%%.%df',-i);
+    elseif i>=4
+      fmt='%.1g';
+    else
+      fmt='%.0f';
     end
     for j=1:9
       tval=j*10^i;
