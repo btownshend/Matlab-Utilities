@@ -1,9 +1,8 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
-function pubfigure(filename,fnum,width,height)
-  tickfontsize=10;
-  axisfontsize=12;
-  titlefontsize=14;
+function pubfigure(filename,fnum,width,height,varargin)
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14);
+  args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
   end
@@ -18,9 +17,9 @@ function pubfigure(filename,fnum,width,height)
   set(gca,'Box','off');
   % left, bottom, right, top margins
   ps=get(gca,'Position'); % Need to handle stuff at right, such as colorbars
-  margins=axisfontsize*[3.5 3 1 1]/72;
+  margins=args.axisfontsize*[3.5 3 1 1]/72;
   if ~isempty(get(get(gca,'Title'),'String'))
-    margins(4)=titlefontsize*2.5/72;
+    margins(4)=args.titlefontsize*2.5/72;
   end
   ps(1)=margins(1)/width;
   ps(2)=margins(2)/height;
@@ -30,23 +29,27 @@ function pubfigure(filename,fnum,width,height)
   set(gcf,'PaperPosition',[0 0 width height]);
   set(gcf,'PaperSize',[width height]);
   set(gcf,'Units','inches');
-  ps=get(gcf,'Position')
+  ps=get(gcf,'Position');
   set(gcf,'Position',[ps(1) ps(2) width height]);
-  axes=get(gcf,'children')
+  axes=get(gcf,'children');
   for j=1:length(axes)
     if ~strcmp(class(axes(j)),'matlab.graphics.axis.Axes')
       continue;
     end
-    set(axes(j),'FontSize',tickfontsize);
-    set(get(axes(j),'XLabel'),'FontSize',axisfontsize,'FontWeight','normal');
-    set(get(axes(j),'YLabel'),'FontSize',axisfontsize,'FontWeight','normal');
-    set(get(axes(j),'Title'),'FontSize',titlefontsize,'FontWeight','bold');
+    set(axes(j),'FontSize',args.tickfontsize);
+    set(get(axes(j),'XLabel'),'FontSize',args.axisfontsize,'FontWeight','normal');
+    set(get(axes(j),'YLabel'),'FontSize',args.axisfontsize,'FontWeight','normal');
+    set(get(axes(j),'Title'),'FontSize',args.titlefontsize,'FontWeight','bold');
     c=get(axes(j),'Children');
     for i=1:length(c)
       try
-        set(c(i),'MarkerSize',20);
+        if get(c(i),'Marker')=='x'
+          set(c(i),'MarkerSize',8);
+        else
+          set(c(i),'MarkerSize',20);
+        end
       catch me
-        fprintf('Ignoring exception\n');
+        %        fprintf('Ignoring exception\n');
       end
     end
   end
