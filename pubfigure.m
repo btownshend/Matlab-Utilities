@@ -14,7 +14,7 @@ function pubfigure(filename,fnum,width,height,varargin)
   end
   figure(fnum);
 
-  set(gca,'Box','off');
+  %  set(gca,'Box','off');
   % left, bottom, right, top margins
   ps=get(gca,'Position'); % Need to handle stuff at right, such as colorbars
   margins=args.axisfontsize*[3.5 3 1 1]/72;
