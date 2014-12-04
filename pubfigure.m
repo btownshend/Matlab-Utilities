@@ -1,7 +1,7 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
 function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14);
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -46,13 +46,13 @@ function pubfigure(filename,fnum,width,height,varargin)
         if get(c(i),'Marker')=='x'
           set(c(i),'MarkerSize',8);
         else
-          set(c(i),'MarkerSize',20);
+          set(c(i),'MarkerSize',args.markersize);
         end
       catch me
         %        fprintf('Ignoring exception\n');
       end
     end
   end
-  print(gcf,'-depsc2',filename);
-  fprintf('Saved figure to %s\n', filename);
+  print(gcf,sprintf('-d%s',args.format),filename);
+  fprintf('Saved figure to %s with format %s\n', filename,args.format);
 end
