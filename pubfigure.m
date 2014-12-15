@@ -1,7 +1,7 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
 function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20);
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20,'scale',1);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -12,6 +12,8 @@ function pubfigure(filename,fnum,width,height,varargin)
   if nargin<4
     height=width*2/3;
   end
+  width=width*args.scale;
+  height=height*args.scale;
   figure(fnum);
 
   %  set(gca,'Box','off');
