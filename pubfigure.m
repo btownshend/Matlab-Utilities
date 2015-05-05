@@ -1,7 +1,7 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
 function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20,'scale',1);
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20,'scale',1,'savedata',false);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -57,4 +57,8 @@ function pubfigure(filename,fnum,width,height,varargin)
   end
   print(gcf,sprintf('-d%s',args.format),filename);
   fprintf('Saved figure to %s with format %s\n', filename,args.format);
+  if args.savedata
+    % Also export data
+    exportfigdata(gcf,[filename,'.csv']);
+  end
 end
