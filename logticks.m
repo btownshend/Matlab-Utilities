@@ -16,6 +16,13 @@ for ax=1:2
   end
   ticks=[];
   ticklabels={};
+  if c(ax*2-1)<=0
+    if c(ax)<=0
+      error('Can add log ticks since axes bounds are <= 0');
+    end
+    c(ax*2-1)=c(ax)/1000;
+  end
+  ndecades=ceil(log10(c(ax*2)))-floor(log10(c(ax*2-1)));
   for i=floor(log10(c(ax*2-1))):ceil(log10(c(ax*2)))
     if i<0
       fmt=sprintf('%%.%df',-i);
@@ -30,8 +37,16 @@ for ax=1:2
         continue;
       end
       ticks(end+1)=tval;
-      if j==1 || j==2 || j==5
-        ticklabels{end+1}=sprintf(fmt,tval);
+      if j==1 || (j==2 && ndecades<5) || (j==5 && ndecades <3)
+        if abs(tval)>=1 && abs(tval)<100
+          ticklabels{end+1}=sprintf('%d',tval);
+        elseif abs(tval)>=0.1 && abs(tval)<1
+          ticklabels{end+1}=sprintf('%.1f',tval);
+        elseif tval/10^i == 1
+          ticklabels{end+1}=sprintf('10^{%d}',i);
+        else
+          ticklabels{end+1}=sprintf('%dx10^{%d}',tval/10^i,i);
+        end
       else
         ticklabels{end+1}='';
       end
