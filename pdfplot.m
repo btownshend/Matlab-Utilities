@@ -22,11 +22,15 @@ for i=1:nbins
   last=round(i/nbins*length(xs));
   pval=(last-first+1)/length(xs)/(xs(last)-xs(first));
   px=[px,xs(first),xs(last)];
-  py=[py,pval,pval];
+  if dolog
+    py=[py,pval*mean(xs(first:last)),pval*mean(xs(first:last))];
+  else
+    py=[py,pval,pval];
+  end
   first=last+1;
 end
 if dolog
-  h=semilogx(px,py.*px,popts);
+  h=semilogx(px,py,popts);
   ylabel('PDF (scaled by X)');
 else
   h=plot(px,py,popts);
