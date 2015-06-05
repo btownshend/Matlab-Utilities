@@ -22,7 +22,7 @@ for ax=1:2
     end
     c(ax*2-1)=c(ax)/1000;
   end
-  ndecades=ceil(log10(c(ax*2)))-floor(log10(c(ax*2-1)));
+  ndecades=log10(c(ax*2))-log10(c(ax*2-1));
   for i=floor(log10(c(ax*2-1))):ceil(log10(c(ax*2)))
     if i<0
       fmt=sprintf('%%.%df',-i);
