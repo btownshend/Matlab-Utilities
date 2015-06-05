@@ -1,7 +1,7 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
 function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',20,'scale',1,'savedata',false);
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',[],'scale',1,'savedata',false);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -43,15 +43,17 @@ function pubfigure(filename,fnum,width,height,varargin)
     set(get(axes(j),'YLabel'),'FontSize',args.axisfontsize,'FontWeight','normal');
     set(get(axes(j),'Title'),'FontSize',args.titlefontsize,'FontWeight','bold');
     c=get(axes(j),'Children');
-    for i=1:length(c)
-      try
-        if get(c(i),'Marker')=='x'
-          set(c(i),'MarkerSize',8);
-        else
-          set(c(i),'MarkerSize',args.markersize);
+    if ~isempty(args.markersize)
+      for i=1:length(c)
+        try
+          if get(c(i),'Marker')=='x'
+            set(c(i),'MarkerSize',8);
+          else
+            set(c(i),'MarkerSize',args.markersize);
+          end
+        catch me
+          %        fprintf('Ignoring exception\n');
         end
-      catch me
-        %        fprintf('Ignoring exception\n');
       end
     end
   end
