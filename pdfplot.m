@@ -1,5 +1,5 @@
 % pdfplot - plot PDF of data
-function h=pdfplot(x,popts,dolog,nbins)
+function [h,py]=pdfplot(x,popts,dolog,nbins)
 if nargin<2 || length(popts)==0
   popts='-';
 end
