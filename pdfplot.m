@@ -20,12 +20,18 @@ first=1;
 px=[]; py=[];
 for i=1:nbins
   last=round(i/nbins*length(xs));
+  if xs(last)-xs(first) < eps
+    continue;
+  end
   pval=(last-first+1)/length(xs)/(xs(last)-xs(first));
   px=[px,xs(first),xs(last)];
   if dolog
     py=[py,pval*mean(xs(first:last)),pval*mean(xs(first:last))];
   else
     py=[py,pval,pval];
+  end
+  if any(~isfinite(py) | py>1000)
+    fprintf('pdfplot: %d samples are not finite or >1000\n', sum(~isfinite(py) | py>1000));
   end
   first=last+1;
 end
