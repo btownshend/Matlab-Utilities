@@ -38,7 +38,7 @@ for ax=1:2
       end
       ticks(end+1)=tval;
       if j==1 || (j==2 && ndecades<5) || (j==5 && ndecades <3)
-        if abs(tval)>=1 && abs(tval)<100
+        if abs(tval)>=1 && abs(tval)<10000
           ticklabels{end+1}=sprintf('%d',tval);
         elseif abs(tval)>=0.1 && abs(tval)<1
           ticklabels{end+1}=sprintf('%.1f',tval);
