@@ -18,10 +18,12 @@ if nargin<2
     name=sprintf('Fig%d',get(fig,'Number'));
   end
   filename=[name,'.pdf'];
+  filename=strrep(filename,'/','_');
 end
 width=11*2;
 height=8.5*2;
 set(fig,'PaperPositionMode','manual','PaperUnits','inches','PaperSize',[width,height],'PaperPosition',[0 0 width height]);
-%set(get(gcf,'Children'),'FontSize',8);
+set(get(gcf,'Children'),'FontSize',12);
 print(fig,filename,'-dpdf','-r600');
 fprintf('Saved figure %d (%s) as %s\n', get(fig,'Number'),get(fig,'Name'), filename);
+set(fig,'PaperPositionMode','auto');
