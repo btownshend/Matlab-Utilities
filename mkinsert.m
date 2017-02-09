@@ -1,6 +1,6 @@
 % Save a figure for use in powerpoint or prezi
 function mkinsert(fnum,varargin)
-  defaults=struct('name',[],'aspect',16/9,'dpi',72,'fontsize',16,'markersize',20);
+  defaults=struct('name',[],'aspect',16/9,'dpi',72,'fontsize',16,'markersize',20,'width',1280);
   args=processargs(defaults,varargin);
 
   if nargin<1
@@ -29,7 +29,7 @@ function mkinsert(fnum,varargin)
   end
 
   figure(fnum);
-  width=1280;   
+  width=args.width;   
   height=width/args.aspect;
   width=width-0.5;% Always end up with 1 extra pixel 
   height=height-0.5;
