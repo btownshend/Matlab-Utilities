@@ -1,7 +1,7 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
 function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',[],'scale',1,'savedata',false);
+  defaults=struct('tickfontsize',10,'axisfontsize',12,'titlefontsize',14,'format','epsc2','markersize',[],'scale',1,'savedata',false,'tight',true);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -15,6 +15,7 @@ function pubfigure(filename,fnum,width,height,varargin)
   width=width*args.scale;
   height=height*args.scale;
   figure(fnum);
+
 
   %  set(gca,'Box','off');
   % left, bottom, right, top margins
@@ -57,6 +58,21 @@ function pubfigure(filename,fnum,width,height,varargin)
       end
     end
   end
+  
+
+  if args.tight
+    % Make figure bounds tight (see matlab doc)
+    % NOT idempotent
+    ax = gca;
+    outerpos = ax.OuterPosition;
+    ti = ax.TightInset;
+    left = outerpos(1) + ti(1);
+    bottom = outerpos(2) + ti(2);
+    ax_width = outerpos(3) - ti(1) - ti(3) - 0.02;
+    ax_height = outerpos(4) - ti(2) - ti(4) - 0.02;
+    ax.Position = [left bottom ax_width ax_height];
+  end
+
   print(gcf,sprintf('-d%s',args.format),filename);
   fprintf('Saved figure to %s with format %s\n', filename,args.format);
   if args.savedata
