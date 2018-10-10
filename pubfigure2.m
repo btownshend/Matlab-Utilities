@@ -1,7 +1,8 @@
 % Save a figure for use in a publication
 % Sets width, height in inches
-function pubfigure(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'scale',1,'savedata',false,'tight',true,'minfontsize',10,'maxfontsize',14,'childfontsize',[]);
+% Use width,height as the dimensions of the current axes in the plot
+function pubfigure2(filename,fnum,width,height,varargin)
+  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'scale',1,'savedata',false,'minfontsize',10,'maxfontsize',14,'childfontsize',[],'units','inches');
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -12,11 +13,7 @@ function pubfigure(filename,fnum,width,height,varargin)
   if nargin<4
     height=width*2/3;
   end
-  width=width*args.scale;
-  height=height*args.scale;
-  figure(fnum);
-
-
+  
   if isempty(args.tickfontsize)
     args.tickfontsize=args.minfontsize;
   end
@@ -29,24 +26,23 @@ function pubfigure(filename,fnum,width,height,varargin)
   if isempty(args.childfontsize)
     args.childfontsize=args.minfontsize;
   end
-  
-  %  set(gca,'Box','off');
-  % left, bottom, right, top margins
-  ps=get(gca,'Position'); % Need to handle stuff at right, such as colorbars
-  margins=args.axisfontsize*[3.5 3 1 1]/72;
-  if ~isempty(get(get(gca,'Title'),'String'))
-    margins(4)=args.titlefontsize*2.5/72;
+  if args.scale~=1
+    width=width*args.scale;
+    height=height*args.scale;
+    args.tickfontsize=args.tickfontsize*args.scale;
+    args.axisfontsize=args.axisfontsize*args.scale;
+    args.titlefontsize=args.titlefontsize*args.scale;
+    args.childfontsize=args.childfontsize*args.scale;
   end
-  ps(1)=margins(1)/width;
-  ps(2)=margins(2)/height;
-  ps(4)=1-(margins(2)+margins(4))/height;
-  % set(gca,'Position',ps);
-  set(gcf,'PaperUnits','inches');
-  set(gcf,'PaperPosition',[0 0 width height]);
-  set(gcf,'PaperSize',[width height]);
-  set(gcf,'Units','inches');
-  ps=get(gcf,'Position');
-  set(gcf,'Position',[ps(1) ps(2) width height]);
+  
+  
+  figure(fnum);
+  %  set(gca,'Box','off');
+  set(gcf,'PaperUnits',args.units);
+  set(gcf,'Units',args.units);
+
+
+  % Walk through children to update any font or marker sizes
   axes=get(gcf,'children');
   for j=1:length(axes)
     if ~strcmp(class(axes(j)),'matlab.graphics.axis.Axes')
@@ -79,25 +75,35 @@ function pubfigure(filename,fnum,width,height,varargin)
     end
   end
   
+  % Scale size so that axes are the desired size
 
-  if args.tight
-    % Make figure bounds tight (see matlab doc)
-    % NOT idempotent
-    ax = gca;
-    outerpos = ax.OuterPosition;
-    ti = ax.TightInset;
-    left = outerpos(1) + ti(1);
-    bottom = outerpos(2) + ti(2);
-    ax_width = outerpos(3) - ti(1) - ti(3) - 0.02;
-    ax_height = outerpos(4) - ti(2) - ti(4) - 0.02;
-    ax.Position = [left bottom ax_width ax_height];
+  % Find position of axes
+  priorpsn=get(gca,'Position');
+  for i=1:10
+    % Need to iterate as margins change slightly with figure resizing
+    psn=get(gca,'Position');
+    fprintf('Border fractions: %.3f %.3f\n', psn(3:end));
+    fpos=get(gcf,'Position');
+    borders=(1-(psn(3:4)+priorpsn(3:4))/2).*fpos(3:4);
+    priorpsn=psn;
+    fwidth=width+borders(1);
+    fheight=height+borders(2);
+
+    set(gcf,'PaperPositionMode','manual');
+    set(gcf,'PaperPosition',[0 0 fwidth fheight]);
+    set(gcf,'PaperSize',[fwidth height])
+
+    % Resize display figure as well as print figure
+    set(gcf,'Position',[fpos(1) fpos(2) fwidth fheight]);
+    pause(0.1);  % Pause to cause figure update
   end
-
+  
   print(gcf,sprintf('-d%s',args.format),filename);
   fprintf('Saved figure to %s with format %s\n', filename,args.format);
   if args.savedata
     % Also export data
     exportfigdata(gcf,[filename,'.csv']);
   end
+  fprintf('gca.pos=[%f,%f,%f,%f]\n',get(gca,'Position'));
   args
 end
