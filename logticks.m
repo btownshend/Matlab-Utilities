@@ -42,6 +42,8 @@ for ax=1:2
           ticklabels{end+1}=sprintf('%d',tval);
         elseif abs(tval)>=0.1 && abs(tval)<1
           ticklabels{end+1}=sprintf('%.1f',tval);
+        elseif abs(tval)>=0.01 && abs(tval)<0.1
+          ticklabels{end+1}=sprintf('%.2f',tval);
         elseif tval/10^i == 1
           ticklabels{end+1}=sprintf('10^{%d}',i);
         else
