@@ -7,7 +7,9 @@ end
 if nargin<3
   nm='';
 end
-if isstruct(x) || isobject(x)
+if strcmp(class(x),'containers.Map')
+  bytes=memused(x.keys,minsize,'keys')+memused(x.values,minsize,'values')+8;
+elseif isstruct(x) || isobject(x)
   fn=fieldnames(x);
   sz=[];
   for i=1:length(fn)
@@ -16,7 +18,10 @@ if isstruct(x) || isobject(x)
       if iscell(x(1).(fn{i}))
         sz(i)=memused({x.(fn{i})},minsize,subnm);
       else
-        sz(i)=memused([x.(fn{i})],minsize,subnm);
+        sz(i)=0;
+        for j=1:length(x)
+          sz(i)=sz(i)+memused(x(j).(fn{i}),minsize,subnm);
+        end
       end
     else
       sz(i)=memused(x.(fn{i}),minsize,subnm);
