@@ -7,10 +7,10 @@ function pubfigure2(filename,fnum,width,height,varargin)
   if nargin<2
     fnum=gcf;
   end
-  if nargin<3
+  if nargin<3 || isempty(width)
     width=6;
   end
-  if nargin<4
+  if nargin<4 || isempty(height)
     height=width*2/3;
   end
   
