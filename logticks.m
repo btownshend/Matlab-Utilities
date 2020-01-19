@@ -18,7 +18,8 @@ for ax=1:2
   ticklabels={};
   if c(ax*2-1)<=0
     if c(ax)<=0
-      error('Can''t add log ticks since axes bounds are <= 0');
+      fprintf('Can''t add log ticks since axes bounds are <= 0');
+      continue;
     end
     c(ax*2-1)=c(ax)/1000;
   end
