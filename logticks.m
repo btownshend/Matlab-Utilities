@@ -1,30 +1,44 @@
 % Add logarithmic ticks to an axis
-function logticks(xlog,ylog)
+function logticks(xlog,ylog,clog)
 if nargin<1
   xlog=true;
 end
 if nargin<2
   ylog=xlog;
 end
-c=axis;
-for ax=1:2
+if nargin<3
+  clog=false;
+end
+for ax=1:3
   if ax==1 && ~xlog
     continue;
   end
   if ax==2 && ~ylog
     continue;
   end
+  if ax==3 && ~clog
+    continue;
+  end
   ticks=[];
   ticklabels={};
-  if c(ax*2-1)<=0
-    if c(ax)<=0
+  if ax==1
+    c=axis;
+    cax=c([1,3]);
+  elseif ax==2
+    c=axis;
+    cax=c([2,4]);
+  elseif ax==3
+    cax=10.^caxis;
+  end
+  if cax(1)<=0
+    if cax()<=0
       fprintf('Can''t add log ticks since axes bounds are <= 0');
       continue;
     end
-    c(ax*2-1)=c(ax)/1000;
+    cax(1)=cax(2)/1000;
   end
-  ndecades=log10(c(ax*2))-log10(c(ax*2-1));
-  for i=floor(log10(c(ax*2-1))):ceil(log10(c(ax*2)))
+  ndecades=log10(cax(2))-log10(cax(1));
+  for i=floor(log10(cax(1))):ceil(log10(cax(2)))
     if i<0
       fmt=sprintf('%%.%df',-i);
     elseif i>=4
@@ -34,7 +48,7 @@ for ax=1:2
     end
     for j=1:9
       tval=j*10^i;
-      if tval<c(ax*2-1) || tval>c(ax*2)
+      if tval<cax(1) || tval>cax(2)
         continue;
       end
       ticks(end+1)=tval;
@@ -58,8 +72,23 @@ for ax=1:2
   if ax==1
     set(gca,'XTick',ticks);
     set(gca,'XTickLabel',ticklabels);
-  else
+  elseif ax==2
     set(gca,'YTick',ticks);
     set(gca,'YTickLabel',ticklabels);
+  elseif ax==3
+    % Find the colorbar
+    ch=get(gcf,'Children');
+    h=[];
+    for i=1:length(ch)
+      if isa(ch(i),'matlab.graphics.illustration.ColorBar')
+        h=ch(i);
+        break;
+      end
+    end
+    if isempty(h)
+      error('logticks: Unable to locate colorbar');
+    end
+    set(h,'Ticks',log10(ticks));
+    set(h,'TickLabels',ticklabels);
   end
 end
