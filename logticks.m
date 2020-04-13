@@ -23,10 +23,10 @@ for ax=1:3
   ticklabels={};
   if ax==1
     c=axis;
-    cax=c([1,3]);
+    cax=c([1,2]);
   elseif ax==2
     c=axis;
-    cax=c([2,4]);
+    cax=c([3,4]);
   elseif ax==3
     cax=10.^caxis;
   end
