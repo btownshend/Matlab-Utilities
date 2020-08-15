@@ -26,30 +26,39 @@ if isprop(h,'ZLabel') && ~isempty(h.ZLabel.String)
   args.zlabel=h.ZLabel.String;
 end
 data=[];hdr={};
-if isprop(h,'XData')
-  fprintf('Have XData with length %d\n', length(h.XData(:)));
-  data(:,end+1)=h.XData(:);
-  hdr{end+1}=args.xlabel;
-end
-if isprop(h,'YData')
-  fprintf('Have YData with length %d\n', length(h.YData(:)));
-  data(:,end+1)=h.YData(:);
-  hdr{end+1}=args.ylabel;
-end
-if isprop(h,'ZData')
-  fprintf('Have ZData with length %d\n', length(h.ZData(:)));
-  data(:,end+1)=h.ZData(:);
-  hdr{end+1}=args.zlabel;
-end
-if isprop(h,'LData')
-  fprintf('Have LData with length %d\n', length(h.LData(:)));
-  data(:,end+1)=h.LData(:);
-  hdr{end+1}='Lower';
-end
-if isprop(h,'UData')
-  fprintf('Have UData with length %d\n', length(h.UData(:)));
-  data(:,end+1)=h.UData(:);
-  hdr{end+1}='Upper';
+if isa(h,'matlab.graphics.primitive.Surface')
+  x=repmat(h.XData(:)',size(h.ZData,1),1);
+  data(:,1)=x(:);
+  y=repmat(h.YData(:),1,size(h.ZData,2));
+  data(:,2)=y(:);
+  data(:,3)=h.CData(:);
+  hdr={args.xlabel,args.ylabel,args.zlabel};
+else
+  if isprop(h,'XData')
+    fprintf('Have XData with length %d\n', length(h.XData(:)));
+    data(:,end+1)=h.XData(:);
+    hdr{end+1}=args.xlabel;
+  end
+  if isprop(h,'YData')
+    fprintf('Have YData with length %d\n', length(h.YData(:)));
+    data(:,end+1)=h.YData(:);
+    hdr{end+1}=args.ylabel;
+  end
+  if isprop(h,'ZData') && length(h.ZData(:))>0
+    fprintf('Have ZData with length %d\n', length(h.ZData(:)));
+    data(:,end+1)=h.ZData(:);
+    hdr{end+1}=args.zlabel;
+  end
+  if isprop(h,'LData')
+    fprintf('Have LData with length %d\n', length(h.LData(:)));
+    data(:,end+1)=h.LData(:);
+    hdr{end+1}='Lower';
+  end
+  if isprop(h,'UData')
+    fprintf('Have UData with length %d\n', length(h.UData(:)));
+    data(:,end+1)=h.UData(:);
+    hdr{end+1}='Upper';
+  end
 end
 if ~isempty(data)
   for i=1:length(hdr)
