@@ -2,7 +2,7 @@
 % Sets width, height in inches
 % Use width,height as the dimensions of the current axes in the plot
 function pubfigure2(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'scale',1,'savedata',false,'minfontsize',10,'maxfontsize',14,'childfontsize',[],'units','inches');
+  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'scale',1,'savedata',false,'minfontsize',10,'maxfontsize',14,'childfontsize',[],'units','inches','srcdata',[]);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -100,8 +100,12 @@ function pubfigure2(filename,fnum,width,height,varargin)
   
   print(gcf,sprintf('-d%s',args.format),filename);
   fprintf('Saved figure to %s with format %s\n', filename,args.format);
-  if args.savedata
-    % Also export data
+  if ~isempty(args.srcdata)
+    % Explicit sourcedata in table form
+    assert(istable(args.srcdata));
+    writetable(args.srcdata,[filename,'.csv']);
+  elseif args.savedata
+    % Generic export data by querying figure handle data structure
     exportfigdata(gcf,[filename,'.csv']);
   end
   fprintf('gca.pos=[%f,%f,%f,%f]\n',get(gca,'Position'));
