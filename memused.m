@@ -20,7 +20,7 @@ elseif isstruct(x) || isobject(x)
       else
         sz(i)=0;
         for j=1:length(x)
-          sz(i)=sz(i)+memused(x(j).(fn{i}),minsize,subnm);
+          sz(i)=sz(i)+memused(x(j).(fn{i}),minsize,sprintf('%s(%d)',subnm,j));
         end
       end
     else
