@@ -1,6 +1,22 @@
 % setfig - Create a new figure or reuse one with given name
 function setfig(s)
-global figlist;
+global figlist setfig_tiling;
+if strcmpi(s,'BEGIN')
+  setfig_tiling=1;
+  tiledlayout('flow');
+  return;
+elseif strcmpi(s,'END')
+  setfig_tiling=0;
+  return;
+end
+if ~exist('setfig_tiling')
+  setfig_tiling=0;
+end
+if setfig_tiling
+  fprintf('setfig: tiling on\n');
+  nexttile
+  return;
+end
 undef=0;
 eval('figlist.name;','undef=1;');
 if undef==1
