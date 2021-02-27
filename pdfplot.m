@@ -30,10 +30,11 @@ for i=1:nbins
   else
     py=[py,pval,pval];
   end
-  if any(~isfinite(py) | py>1000)
-    fprintf('pdfplot: %d samples are not finite or >1000\n', sum(~isfinite(py) | py>1000));
-  end
   first=last+1;
+end
+nlarge=sum(~isfinite(py) | py>1000);
+if nlarge>0
+  fprintf('pdfplot: %d samples are not finite or >1000\n', nlarge);
 end
 if dolog
   h=semilogx(px,py,popts);
