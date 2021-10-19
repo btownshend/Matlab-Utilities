@@ -2,7 +2,7 @@
 % Sets width, height in inches
 % Use width,height as the dimensions of the current axes in the plot
 function pubfigure2(filename,fnum,width,height,varargin)
-  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'xmarkersizer',8,'scale',1,'savedata',false,'minfontsize',10,'maxfontsize',14,'childfontsize',[],'units','inches','srcdata',[],'font',[],'extra',[1,1]);
+  defaults=struct('tickfontsize',[],'axisfontsize',[],'titlefontsize',[],'format','epsc2','markersize',[],'xmarkersize',8,'scale',1,'savedata',false,'minfontsize',10,'maxfontsize',14,'childfontsize',[],'units','inches','srcdata',[],'font',[],'extra',[1,1]);
   args=processargs(defaults,varargin);
   if nargin<2
     fnum=gcf;
@@ -85,9 +85,13 @@ function pubfigure2(filename,fnum,width,height,varargin)
 
   % Find position of axes
   priorpsn=get(gca,'Position');
+  axis=gca;
+  if isa(get(gca,'Parent'),'matlab.graphics.layout.TiledChartLayout')
+    axis=get(gca,'Parent');
+  end
   for i=1:10
     % Need to iterate as margins change slightly with figure resizing
-    psn=get(gca,'Position');
+    psn=get(axis,'Position');
     %psn(3)=psn(3)*.9;   % Reduce right border to avoid clipping
     fprintf('Border fractions: %.3f %.3f\n', psn(3:end));
     fpos=get(gcf,'Position');
@@ -95,10 +99,10 @@ function pubfigure2(filename,fnum,width,height,varargin)
     priorpsn=psn;
     fwidth=width+borders(1);
     fheight=height+borders(2);
-
+    %fprintf('fwidth=%f, fheight=%f\n', fwidth, fheight);
     set(gcf,'PaperPositionMode','manual');
     set(gcf,'PaperPosition',[0 0 fwidth*args.extra(1) fheight*args.extra(2)]);  % Scale a bit to avoid clipping
-    set(gcf,'PaperSize',[fwidth*args.extra(1) height*args.extra(2)])
+    set(gcf,'PaperSize',[fwidth*args.extra(1) fheight*args.extra(2)])
 
     % Resize display figure as well as print figure
     set(gcf,'Position',[fpos(1) fpos(2) fwidth fheight]);
